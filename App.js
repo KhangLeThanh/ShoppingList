@@ -1,5 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, FlatList } from 'react-native';
+import { Header, Button, Card, FormInput, List, ListItem } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import Expo, { SQLite } from 'expo';
 
 const db = SQLite.openDatabase('coursedb.db');
@@ -46,7 +49,7 @@ export default class App extends React.Component {
       }, null, this.updateList
     )    
   }
-
+  
   listSeparator = () => {
     return (
       <View
@@ -57,36 +60,40 @@ export default class App extends React.Component {
       />
     );
   }; 
+ 
   render() {
     
     return (
-      <View style={styles.container}>
-        <View style={{flex: 20,alignItems: 'center',justifyContent: 'flex-end'}}>         
-          <TextInput placeholder='Product' style={{ marginTop: 5, marginBottom: 5,  fontSize:18, width: 200, borderColor: 'gray', borderWidth: 1}}
-      onChangeText={(name) => this.setState({name})} value={this.state.name}/>
-          <TextInput placeholder='Amount'  style={{ marginTop: 5, marginBottom: 5,  fontSize:18, width: 200, borderColor: 'gray', borderWidth: 1}}
+      <View>
+          <Header   
+            centerComponent={{ text: 'SHOPPING LIST', style: { color: '#fff' } }}   
+          />
+          <Text style={styles.titleText}>Product</Text>
+          <FormInput placeholder='Product' style={{ marginTop: 5, marginBottom: 5,  fontSize:18, width: 200,      borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(name) => this.setState({name})} value={this.state.name}/>
+          <Text style={styles.titleText}>Amount</Text>
+          <FormInput placeholder='Amount'  style={{ marginTop: 5, marginBottom: 5,  fontSize:18, width: 200,      borderColor: 'gray', borderWidth: 1}}
               onChangeText={(amount) => this.setState({amount})}
               value={this.state.amount}/>      
-        </View>  
-        <View style={{flex: 20}}>
-            <Button onPress={this.buttonAdd} title="Save" style={styles.buttonstyle}/>  
-          </View>   
-          <View style={{flex: 60}}>
-            <Text style={styles.text_shop}>Shopping List</Text> 
+              <Button onPress={this.buttonAdd} title="Save" style={styles.buttonstyle}/>  
+            <List>
                  <FlatList 
-                  style={{marginLeft : "0%"}}
                   keyExtractor={item => item.id} 
                   renderItem={({item}) => 
-                    <View style={{flexDirection: 'row'}}>
-                      <View>
-                        <Text style={{fontSize: 18}}>{item.name}, {item.amount}</Text>
-                      </View>
-                      <View>
-                        <Text style={{fontSize: 18, color: '#0000ff'}} onPress={() => this.deleteItem(item.id)}> bought</Text>
-                      </View>
-                    </View>} data={this.state.data} ItemSeparatorComponent={this.listSeparator} 
-                />     
-          </View>      
+                    <ListItem
+                      title={item.name}
+                      onPress={() => this.deleteItem(item.id)}
+                      rightTitle={'bought'}
+                      subtitle={
+                        <View style={styles.subtitleView}>                    
+                          <Text style={styles.ratingText}>{item.amount}</Text>
+                        </View>
+                        }
+                      />
+                  
+                    } data={this.state.data}  
+                />   
+            </List>      
       </View>
        
     );
@@ -100,13 +107,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text_shop: {
-    fontSize: 18,
-    color: 'blue'
+  ratingText: {
+    paddingLeft: 10,
+  },
+  subtitleView: {
+    paddingTop: 5
+  },
+  titleText:{
+    paddingLeft:20,
+    paddingTop:10
   },
   buttonstyle:{
-    fontSize: 36,
-    backgroundColor: 'red',
-    color: '#fff'
+    paddingTop:10
   }
 });
